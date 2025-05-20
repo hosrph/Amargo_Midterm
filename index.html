@@ -4,35 +4,189 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CRUD with Firebase</title>
-    <link rel="stylesheet" href="style.css" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"
+      integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
+    <title>Authentication is Fun</title>
+   
   </head>
   <body>
-    <div class="container">
-      <h2>CRUD with Firebase</h2>
-      <hr />
-      <br />
-      <div class="form">
-        RollNo: <input type="text" name="RollNo" id="roll" /> <br /><br />
-        Name:&nbsp; <input type="text" name="name" id="name" /> <br /><br />
-        Gender: <input type="text" name="gender" id="gender" /> <br /><br />
-        Address: <input type="text" name="Address" id="address" /> <br /><br />
-        Email: <input type="text" name="Email" id="email" /> <br /><br />
-        Username: <input type="text" name="Username" id="username" /> <br /><br />
-      </div>
-
-      <div class="buttons">
-        <button id="insert">Insert</button>
-        <button id="read">Read</button>
-        <button id="update">Update</button>
-        <button id="delete">Delete</button>
-      </div>
+   
+      <p><div id="authForm">
+        <h2>Sign Up or Sign In</h2>
+        <input type="email" placeholder="email" id="userEmail" />
+        <input type="password" placeholder="password" id="userPassword" />
+        <br /><br />
+        <button id="signUpButton">Sign Up</button>
+        <button id="signInButton">Sign In</button>
+      </div></p>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/8.4.2/firebase.js"></script>
+    <div id="secretContent">
+      <div class="decorative-container">
+        <div class="container">
+          <h2>Data</h2>
+          <hr />
+          <br />
+          <div class="form">
+            RollNo: <input type="text" name="RollNo" id="roll" /> <br /><br />
+            Name:&nbsp; <input type="text" name="name" id="name" /> <br /><br />
+            Gender: <input type="text" name="gender" id="gender" /> <br /><br />
+            Address: <input type="text" name="Address" id="address" /> <br /><br />
+            Username <input type="text" name="username" id="username" /> <br /><br />
+            Email: <input type="text" name="email" id="email" /> <br /><br />
+          </div>
+    
+          <div class="buttons">
+            <button id="insert">Insert</button>
+            <button id="read">Read</button>
+            <button id="update">Update</button>
+            <button id="delete">Delete</button>
+          </div>
+        </div>
+    
+        <script src="https://www.gstatic.com/firebasejs/8.4.2/firebase.js"></script>
+    
+        <script src="./fireConfig.js"></script>
+    
+        <script src="./myscript.js"></script>
+        
+        <button id="signOutButton">Sign Out</button>
+      </div>
+       
+      </div>
+     
 
-    <script src="./fireConfig.js"></script>
+    <script type="module">
+      //Update the below URL with the appropriate version if necessary.
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+      import {
+        getAuth,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        onAuthStateChanged,
+        signOut,
+        //Update the below URL with the appropriate version if necessary.
+      } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
 
-    <script src="./myscript.js"></script>
+      // INSERT YOUR FIREBASE CONFIG OBJECT HERE
+      const firebaseConfig = {
+        apiKey: "AIzaSyCMBiFjvqTAWhq_9yoCA-ig1LuYlzhSwrs",
+  authDomain: "crud-d96b7.firebaseapp.com",
+  databaseURL: "https://crud-d96b7-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "crud-d96b7",
+  storageBucket: "crud-d96b7.firebasestorage.app",
+  messagingSenderId: "507083681523",
+  appId: "1:507083681523:web:debc3fc2cf6664b4ff1186"
+      };
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+
+      const userEmail = document.querySelector("#userEmail");
+      const userPassword = document.querySelector("#userPassword");
+      const authForm = document.querySelector("#authForm");
+      const secretContent = document.querySelector("#secretContent");
+      const signUpButton = document.querySelector("#signUpButton");
+      const signInButton = document.querySelector("#signInButton");
+      const signOutButton = document.querySelector("#signOutButton");
+
+      secretContent.style.display = "none";
+
+      const userSignUp = async () => {
+        const signUpEmail = userEmail.value;
+        const signUpPassword = userPassword.value;
+        createUserWithEmailAndPassword(auth, signUpEmail, signUpPassword)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            console.log(user);
+            Swal.fire("Your Account is succesfully created!");
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode + errorMessage);
+          });
+      };
+
+      const userSignIn = async () => {
+        const signInEmail = userEmail.value;
+        const signInPassword = userPassword.value;
+        signInWithEmailAndPassword(auth, signInEmail, signInPassword)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            Swal.fire("You have signed in successfully!");
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode + errorMessage);
+          });
+      };
+
+      const checkAuthState = async () => {
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            authForm.style.display = "none";
+            secretContent.style.display = "block";
+          } else {
+            authForm.style.display = "block";
+            secretContent.style.display = "none";
+          }
+        });
+      };
+
+      const userSignOut = async () => {
+        await signOut(auth);
+        Swal.fire("User Logout");
+      };
+
+      checkAuthState();
+
+      signUpButton.addEventListener("click", userSignUp);
+      signInButton.addEventListener("click", userSignIn);
+      signOutButton.addEventListener("click", userSignOut);
+    </script>
+    <style>
+      body {
+  background-color: #e0f0ff;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.decorative-container {
+  background: linear-gradient(135deg, #3a8dde, #74c0fc);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 50, 100, 0.2);
+  color: white;
+  text-align: center;
+  width: 300px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.decorative-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 50, 100, 0.3);
+}
+
+.decorative-container h2 {
+  margin: 0 0 10px;
+}
+
+.decorative-container p {
+  font-size: 16px;
+  line-height: 1.4;
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://kit.fontawesome.com/090fe43456.js" crossorigin="anonymous"></script>
   </body>
 </html>
