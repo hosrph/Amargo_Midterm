@@ -1,13 +1,13 @@
-var rollV, nameV, genderV, addressV;
+var rollV, nameV, genderV, addressV, usernameV, emailV;
 
 function readFom() {
   rollV = document.getElementById("roll").value;
   nameV = document.getElementById("name").value;
   genderV = document.getElementById("gender").value;
   addressV = document.getElementById("address").value;
-  emailV = document.getElementById("email").value;
   usernameV = document.getElementById("username").value;
-  console.log(rollV, nameV, addressV, genderV, emailV, usernameV);
+  emailV = document.getElementById("email").value;
+  console.log(rollV, nameV, addressV, genderV, usernameV, emailV);
 }
 
 document.getElementById("insert").onclick = function () {
@@ -21,16 +21,16 @@ document.getElementById("insert").onclick = function () {
       name: nameV,
       gender: genderV,
       address: addressV,
+      username: usernameV, 
       email: emailV,
-      username: usernameVV,
     });
   alert("Data Inserted");
   document.getElementById("roll").value = "";
   document.getElementById("name").value = "";
   document.getElementById("gender").value = "";
   document.getElementById("address").value = "";
-  document.getElementById("email").value = "";
   document.getElementById("username").value = "";
+  document.getElementById("email").value = "";
 };
 
 document.getElementById("read").onclick = function () {
@@ -44,8 +44,8 @@ document.getElementById("read").onclick = function () {
       document.getElementById("name").value = snap.val().name;
       document.getElementById("gender").value = snap.val().gender;
       document.getElementById("address").value = snap.val().address;
-      document.getElementById("email").value = snap.val().email;
       document.getElementById("username").value = snap.val().username;
+      document.getElementById("email").value = snap.val().email;
     });
 };
 
@@ -56,20 +56,20 @@ document.getElementById("update").onclick = function () {
     .database()
     .ref("student/" + rollV)
     .update({
-      rollNo: rollV,
+      //   rollNo: rollV,
       name: nameV,
       gender: genderV,
       address: addressV,
-      email: emailV,
       username: usernameV,
+      email: emailV,
     });
   alert("Data Update");
   document.getElementById("roll").value = "";
   document.getElementById("name").value = "";
   document.getElementById("gender").value = "";
   document.getElementById("address").value = "";
-  document.getElementById("email").value = "";
   document.getElementById("username").value = "";
+  document.getElementById("email").value = "";
 };
 document.getElementById("delete").onclick = function () {
   readFom();
@@ -83,6 +83,6 @@ document.getElementById("delete").onclick = function () {
   document.getElementById("name").value = "";
   document.getElementById("gender").value = "";
   document.getElementById("address").value = "";
-  document.getElementById("email").value = "";
   document.getElementById("username").value = "";
+  document.getElementById("email").value = "";
 };
